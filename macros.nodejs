@@ -33,6 +33,6 @@
 # macro to invoke the Node.js provides and requires generators
 %nodejs_find_provides_and_requires %{expand: \
 %global _use_internal_dependency_generator 0
-%global __find_provides %{_rpmconfigdir}/nodejs010-provide.sh
-%global __find_requires %{_rpmconfigdir}/nodejs010-require.sh
+%global __find_provides %{_rpmconfigdir}/nodejs010.prov
+%global __find_requires %{_rpmconfigdir}/nodejs010.req
 }

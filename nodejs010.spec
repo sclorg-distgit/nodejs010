@@ -12,7 +12,7 @@
 Summary: %scl Software Collection
 Name: %scl_name
 Version: 2.1
-Release: 3.sc1%{?dist}
+Release: 5%{?dist}
 
 Source1: macros.nodejs
 Source2: nodejs.attr
@@ -111,13 +111,6 @@ cat >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl_name_base}-scldevel << E
 %%scl_prefix_%{scl_name_base} %{scl_prefix}
 EOF
 
-# some packages in the nodejs SCL still include ExcludeArch: %%{nodejs_arches},
-# which is not defined in el6 (in el7 it is defined in redhat-rpm-macros), so
-# we need to add it here, otherwise packages have problem in mash
-%if 0%{?rhel} <= 6
-echo "%%nodejs_arches %%{ix86} x86_64 %%{arm}" >>%{buildroot}%{_root_sysconfdir}/rpm/macros.%{name}
-%endif
-
 # ensure Requires are added to every native module that match the Provides from
 # the nodejs build in the buildroot
 cat << EOF > %{buildroot}%{_rpmconfigdir}/%{name}_native.req
@@ -170,6 +163,10 @@ install -m 644 %{scl_name}.7 %{buildroot}%{_mandir}/man7/%{scl_name}.7
 %{_root_sysconfdir}/rpm/macros.%{scl_name_base}-scldevel
 
 %changelog
+* Thu Jan 14 2016 Tomas Hrcka <thrcka@redhat.com> - 2.1-5
+- Include nodemon in collection
+- Update packaging scripts and macros
+
 * Sun Oct 04 2015 Zuzana Svetlikova <zsvetlik@redhat.com> - 2.1-3
 - Enable installing of whole collection
 

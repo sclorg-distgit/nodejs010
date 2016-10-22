@@ -25,6 +25,7 @@ can `npm link` RPM-installed modules into their personal projects."""
 
 import json
 import os
+import shutil
 import sys
 
 def symlink(source, dest):
@@ -41,6 +42,14 @@ dependencies, which may cause trouble for people using this module with npm.
 Please report this to upstream. For more information, see:
     <https://github.com/tchollingsworth/nodejs-packaging/pull/1>
 """.format(dest))
+            
+        elif '--force' in sys.argv:
+            if os.path.isdir(dest):
+                shutil.rmtree(dest)
+            else:
+                os.unlink(dest)
+                
+            os.symlink(source, dest)
             
         else:
             sys.stderr.write("""
@@ -64,6 +73,9 @@ version of the module and eliminate this error.
 
 def symlink_deps(deps, check):
     if isinstance(deps, dict):
+        #read in the list of mutiple-versioned packages
+        mvpkgs = open('/opt/rh/nodejs010/root/usr/share/node/multiver_modules').read().split('\n')
+            
         for dep, ver in deps.iteritems():
             if dep in mvpkgs and ver != '' and ver != '*':
                 depver = ver.lstrip('~').split('.')[0]
@@ -92,10 +104,7 @@ def symlink_deps(deps, check):
 #the %nodejs_symlink_deps macro passes %nodejs_sitelib as the first argument
 sitelib = sys.argv[1]
 
-#read in the list of mutiple-versioned packages
-mvpkgs = open('/opt/rh/nodejs010/root/usr/share/node/multiver_modules').read().split('\n')
-
-if '--check' in sys.argv:
+if '--check' in sys.argv or '--build' in sys.argv:
     check = True
     modules = [os.getcwd()]
 else:
